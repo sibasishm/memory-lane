@@ -22,11 +22,11 @@ export default function Home() {
 					<br />
 					<span className='text-7xl tracking-wider font-bold'>Memory Lane</span>
 				</h1>
-				<button className='mt-6 px-4 py-2 bg-blue-500 rounded text-white mr-4 hover:shadow-lg focus:shadow-lg focus:outline-none'>
+				<button className='mt-6 px-4 py-2 bg-blue-500 rounded text-white mr-4 hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700'>
 					Show me how
 				</button>
 			</main>
-			<footer className='mt-4 border-t-2 py-12 flex flex-col justify-center items-center bg-gray-100'>
+			<footer className='w-screen fixed bottom-0 mt-4 border-t-2 py-12 flex flex-col justify-center items-center bg-gray-100'>
 				<p>Powered by</p>
 				<img src='/vercel.svg' alt='Vercel Logo' className='mt-2 h-6' />
 			</footer>
