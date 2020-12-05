@@ -1,9 +1,11 @@
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import Navbar from '../components/Navbar';
+import MemoryCard from '../components/MemoryCard';
+import { minifyRecords, table } from '../utils/airtable';
 
-export default function Home() {
+export default function Home({ memories, error }) {
 	return (
-		<div className={styles.container}>
+		<>
 			<Head>
 				<title>Create Next App</title>
 				<link rel='icon' href='/favicon.ico' />
@@ -13,51 +15,50 @@ export default function Home() {
 					rel='stylesheet'
 				/>
 			</Head>
-
-			<main className={styles.main}>
-				<h1 className={styles.title}>
-					Welcome to <a href='https://nextjs.org'>Next.js!</a>
+			<header>
+				<Navbar />
+			</header>
+			<main className='py-24 text-center'>
+				<h1 className='text-3xl leading-loose'>
+					Let's take a trip down your
+					<br />
+					<span className='text-7xl tracking-wider font-bold'>Memory Lane</span>
 				</h1>
-
-				<p className={styles.description}>
-					Get started by editing <code className={styles.code}>pages/index.js</code>
-				</p>
-
-				<div className={styles.grid}>
-					<a href='https://nextjs.org/docs' className={styles.card}>
-						<h3>Documentation &rarr;</h3>
-						<p>Find in-depth information about Next.js features and API.</p>
-					</a>
-
-					<a href='https://nextjs.org/learn' className={styles.card}>
-						<h3>Learn &rarr;</h3>
-						<p>Learn about Next.js in an interactive course with quizzes!</p>
-					</a>
-
-					<a href='https://github.com/vercel/next.js/tree/master/examples' className={styles.card}>
-						<h3>Examples &rarr;</h3>
-						<p>Discover and deploy boilerplate example Next.js projects.</p>
-					</a>
-
-					<a
-						href='https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-						className={styles.card}
-					>
-						<h3>Deploy &rarr;</h3>
-						<p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-					</a>
-				</div>
+				<button className='mt-6 px-4 py-2 bg-blue-500 rounded text-white mr-4 hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700'>
+					Show me how
+				</button>
+				{error ? (
+					<h1>{error}</h1>
+				) : (
+					<ul className='container mx-auto my-4 px-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-left'>
+						{memories.map(({ id, fields }) => (
+							<MemoryCard id={id} data={fields} />
+						))}
+					</ul>
+				)}
 			</main>
-
-			<footer className={styles.footer}>
-				<a
-					href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-					target='_blank'
-					rel='noopener noreferrer'
-				>
-					Powered by <img src='/vercel.svg' alt='Vercel Logo' className={styles.logo} />
-				</a>
+			<footer className='w-screen fixed bottom-0 mt-4 border-t-2 py-12 flex flex-col justify-center items-center bg-gray-100'>
+				<p>Powered by</p>
+				<img src='/vercel.svg' alt='Vercel Logo' className='mt-2 h-6' />
 			</footer>
-		</div>
+		</>
 	);
+}
+
+export async function getServerSideProps(context) {
+	try {
+		const records = await table.select({}).firstPage();
+
+		return {
+			props: {
+				memories: minifyRecords(records),
+			},
+		};
+	} catch (err) {
+		return {
+			props: {
+				error: 'Something went wrong!',
+			},
+		};
+	}
 }
