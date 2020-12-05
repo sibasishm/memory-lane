@@ -1,15 +1,14 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-const Airtable = require('airtable');
-
-const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
-	process.env.AIRTABLE_BASE_ID
-);
-
-const table = base(process.env.AIRTABLE_TABLE_NAME);
+import { table, minifyRecords } from '../../utils/airtable';
 
 export default async (req, res) => {
-	const records = await table.select({}).firstPage();
+	try {
+		const records = await table.select({}).firstPage();
 
-	res.statusCode = 200;
-	res.json(records);
+		res.statusCode = 200;
+		res.json(minifyRecords(records));
+	} catch (err) {
+		console.error(err);
+		res.statusCode = 500;
+		res.json({ message: 'Something went wrong!' });
+	}
 };
